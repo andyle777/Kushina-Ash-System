@@ -69,6 +69,7 @@ def collect_rule(cfg, rule):
     include = list(include)  # copy; may expand the wildcard below
     if "*" in include:
         include = sorted(os.listdir(root))
+    include = [n for n in include if not os.path.basename(n).startswith(".")]
     for name in include:
         base = os.path.join(root, name)
         if not os.path.exists(base):
@@ -78,6 +79,8 @@ def collect_rule(cfg, rule):
         if os.path.isdir(base):
             for dirpath, _, filenames in os.walk(base):
                 for fn in filenames:
+                    if fn.startswith("."):
+                        continue
                     walk.append(os.path.join(dirpath, fn))
         else:
             walk.append(base)
@@ -178,11 +181,15 @@ def push_files(cfg, repo, files, message):
 
 
 def main():
-    dry = "--dry-run" in sys.argv
+    args = sys.argv[1:]
+    dry = "--dry-run" in args
+    want_tier = args[args.index("--tier") + 1] if "--tier" in args else None
     cfg = load_config()
     stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     all_files, quarantined = [], []
     for rule in cfg["sources"]:
+        if want_tier and rule["tier"] != want_tier:
+            continue
         carried, q = collect_rule(cfg, rule)
         print(f"[select] {rule['name']}: {len(carried)} files -> {rule['tier']} ({rule['dest_path']}/)")
         for item in q:
