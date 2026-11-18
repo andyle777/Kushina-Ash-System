@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "name": "ash-bridge",
+  "github": {
+    "api_base": "https://api.github.com",
+    "token_env": "GH_TOKEN"
+  },
+  "public_repo": "andyle777/Kushina-Ash-System",
+  "private_repo": "andyle777/Kushina-Ash-Archive",
+  "classifier": "deterministic",
+  "classifier_note": "Phase 2 hook: set to 'twinflame-hybrid' to route ambiguous items through the deployed twinflame-os workflow (needs MCP access from the caller, not this standalone script).",
+  "sources": [
+    {
+      "name": "bridge-self",
+      "root": "/home/user/ash-bridge",
+      "include": ["*"],
+      "exclude": ["receipts"],
+      "tier": "public",
+      "dest_path": "ash-bridge"
+    },
+    {
+      "name": "custom-skills",
+      "root": "/home/user/skills",
+      "include": [
+        "analytical-engine", "curriculum-wave-distiller", "durability-guardian",
+        "ether-emulation", "experiment-smith", "mysterious-stranger",
+        "omnichronos", "omnikit", "orion-rd-methodology", "paper-deep-read",
+        "passive-buffs", "persona-voice-router", "self-improvement-engine",
+        "syntax-emulation", "toolkit-workflow", "united-english-lexicon"
+      ],
+      "exclude": [],
+      "tier": "public",
+      "dest_path": "vibe-stack/skills"
+    },
+    {
+      "name": "knowledge",
+      "root": "/home/user/knowledge",
+      "include": ["*"],
+      "exclude": [],
+      "tier": "private",
+      "dest_path": "knowledge"
+    }
+  ],
+  "public_mirrors": [
+    {
+      "note": "Kushina personality matrix save state v2.0.0",
+      "private_source": "knowledge/kushina-persona/KNOWLEDGE.md",
+      "public_path": "kushina/personality-matrix.md",
+      "sync_policy": "manual-on-major-state-changes (owner approval required per matrix contract)"
+    }
+  ],
+  "secret_gate": {
+    "action": "quarantine",
+    "patterns": [
+      "ghp_[A-Za-z0-9]{20,}",
+      "github_pat_[A-Za-z0-9_]{20,}",
+      "sk-[A-Za-z0-9]{20,}",
+      "AKIA[0-9A-Z]{16}",
+      "xox[baprs]-[A-Za-z0-9-]{10,}",
+      "Bearer [A-Za-z0-9._-]{30,}"
+    ]
+  },
+  "limits": {
+    "max_file_bytes": 5000000
+  }
+}
