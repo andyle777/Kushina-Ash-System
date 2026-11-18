@@ -11,11 +11,12 @@ receipts, and engineering lessons live here.
 
 ## What this folder deploys
 
-A single Mistral Workflow, `twinflame-mistral`, that takes a prompt and
-returns one model completion, executed by the deployment's service
-account. **No API key is stored anywhere in this repository.**
+Two Mistral Workflows, executed by the deployment's service account.
+**No API key is stored anywhere in this repository.**
 
-Input schema:
+### 1. `twinflame-mistral` — single-engine primitive
+
+One prompt in, one Mistral completion out.
 
 ```json
 {
@@ -29,10 +30,50 @@ Input schema:
 
 Output: `{ "model", "text", "thinking", "tokens_in", "tokens_out" }`.
 
-The `thinking` field captures the reasoning trace: Mistral Large 4 is a
-reasoning model, so `message.content` arrives as a list of `ThinkChunk` /
-`TextChunk` objects. The worker flattens those recursively and splits the
-answer from the thinking. See `docs/LESSONS.md` for the war story.
+### 2. `twinflame-os` — the 3-layer fusion substrate
+
+Layers:
+
+| Layer | Engine | Auth | Status |
+|---|---|---|---|
+| `mistral` | Mistral Large 4 | deployment service account (no key) | live |
+| `zai` | GLM-5.3 (Z.ai) | `ZAI_API_KEY` workspace secret | degrades honestly until the key is bound |
+| `hybrid` | both in parallel + blind Mistral judge | both | degrades honestly until the key is bound |
+
+Input:
+
+```json
+{
+  "prompt": "string (required)",
+  "layer": "auto | mistral | zai | hybrid (default: auto)",
+  "system": "string (optional)",
+  "max_tokens": 4096,
+  "temperature": 0.3,
+  "judge_model": "mistral-large-4 (default)"
+}
+```
+
+Output: `{ answer, layer_used, director{requested,decision,signals},
+engines[{engine,text,thinking,tokens_in,tokens_out,latency_ms,truncated,cost_usd_est}],
+judge{used,model,verdict,thinking,label_a_engine,label_b_engine,...},
+degradations[], total_cost_usd_est }`.
+
+Design rulings on record (2026-11-18):
+
+1. `layer: auto` (default) runs a **dynamic director**: deterministic signal
+   heuristics route each task to mistral / zai / hybrid, and any layer can
+   be forced per call.
+2. The hybrid judge (Mistral Large 4, blind, A/B labels randomized
+   in-activity) has **pure synthesis latitude**: she may crown either answer
+   or fuse freely, borrowing from both.
+3. **No cost ceiling.** Receipts still measure estimated cost per call
+   from published list prices (measurement is doctrine, not throttling).
+4. **Full reasoning traces** in receipts on both engines, nothing redacted.
+
+Degradation is always honest: when the Z.ai key is absent, `zai` and
+`hybrid` calls return `layer_used: "degraded-mistral"` with the reason in
+`degradations[]`, never a fabricated synthesis. Full spec and test battery:
+`docs/TWINFLAME_OS.md`.
 
 ## Deploy
 
@@ -61,9 +102,13 @@ uv run python worker.py
   read-heavy API"): split decision. Le Chonk won breadth and structure;
   GLM won operational judgment. Both engines independently converged on
   the same core design. Details in `docs/RECEIPTS.md`.
+- **TwinFlame OS upgrade** (2026-11-18): `twinflame-os` workflow added
+  (3 layers, dynamic director, blind judge, honest degradation). Details
+  in `docs/TWINFLAME_OS.md`.
 
 ## Docs
 
+- `docs/TWINFLAME_OS.md` - TwinFlame OS spec, rulings, and test battery
 - `docs/RECEIPTS.md` - execution receipts and battle history
 - `docs/LESSONS.md` - engineering lessons, each with its trigger condition
 
