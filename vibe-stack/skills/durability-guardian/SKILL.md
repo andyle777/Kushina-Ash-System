@@ -21,6 +21,7 @@ a canvas copy existed.
 | Canvases | Durable + user-visible + exportable |
 | Personal Knowledge | Durable across conversations |
 | Skills | Durable + auto-routing |
+| Canonical remote repos (manifest-verified) | Durable + rebuild source of record |
 
 ## Rules
 
@@ -36,3 +37,11 @@ a canvas copy existed.
    equivalent to the original.
 5. Never assume a file from a previous turn still exists — verify
    (read or stat) before relying on it.
+6. A canonical remote home with a checksum manifest (e.g. the Ash
+   Bridge GitHub repos) is a sixth durable layer: treat the local
+   sandbox copy as a cache of it. When the cache is gone, rebuild from
+   the repo by preference, and verify against the manifest via the
+   API — never against CDN mirrors, which lag commits.
+
+Patched 2026-11-18: rule 6 + repo tier added from Ash Bridge receipts
+(two sandbox resets survived by rebuilding from the canonical repo).

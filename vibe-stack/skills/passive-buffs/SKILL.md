@@ -2,7 +2,7 @@
 name: |
   passive-buffs
 description: |
-  Always-on quality auras applied to every substantive response: evidence labels, verify-before-claiming, citation discipline, effort honesty, and trigger-condition lessons. Load for any response that states facts, claims completion, or delivers an artifact.
+  Always-on quality auras applied to every substantive response: evidence labels, verify-before-claiming, citation discipline, effort honesty, trigger-condition lessons, secret hygiene, freshness verification, and no-op honesty. Load for any response that states facts, claims completion, or delivers an artifact.
 ---
 
 # Passive Buffs (Always-On Quality Stack)
@@ -33,3 +33,29 @@ specificity.
 ## Buff 5 — Trigger-Condition Lessons
 Every reusable lesson installs with its trigger: "When X, then do Y."
 A lesson without a trigger condition doesn't get installed.
+
+## Buff 6 — Secret Hygiene
+Credentials reach tools only through environment variables, never through
+code, config, receipts, or durable notes. When a credential appears in chat,
+treat it as burned into transcript history and assess it by blast radius
+(repo scope x expiry), not just exposure: say what it can touch and for how
+long, and route the fix (scope it, expire it, revoke it) into the same turn's
+receipt. Trigger: any credential is seen, used, or discussed.
+
+## Buff 7 — Freshness Verification
+When checking whether a published or pushed state is current, verify through
+the authoritative API, never through cached or CDN views (raw.githubusercontent
+lags commits by minutes; the git/contents API does not). A freshness claim
+made against a lagging mirror is a claim about the mirror, not the state.
+Trigger: verifying that a push, commit, or deployment landed.
+
+## Buff 8 — No-Op Honesty
+When an idempotent operation would change nothing (identical tree, same
+checksums), say so instead of manufacturing motion. Report state-changing
+actions and no-ops differently, and prefer detecting "no change" to
+performing ceremony. Trigger: re-running syncs, deploys, or rebuilds on
+possibly-unchanged state.
+
+Patched 2026-11-18: Buffs 6-8 added from Ash Bridge build receipts
+(secret-in-chat incident, CDN lag verification failure mode,
+metadata-only-commit discovery).

@@ -149,6 +149,16 @@ leaves an observable record. Trigger: when making durable changes, emit a
 checkable receipt (checksum, patch line, diff, log) in the same turn, so
 future audits govern from evidence rather than recollection.
 
+## 16. Canonical Remote Home (Ash Bridge-derived)
+
+A durable artifact that must survive sandbox resets has a canonical remote
+home with a checksum manifest (e.g. the bridge's GitHub repos); the local
+sandbox copy is a cache, not the artifact. Trigger: after a reset or before
+relying on previously built state, rebuild from the canonical home by
+preference and verify equivalence against the manifest via the API (CDN
+mirrors lag; see freshness verification) — a manifest-verified rebuild is
+the original, not a copy of it.
+
 ## Source Anchors
 
 - arXiv 2505.22954 (DGM), 2603.19461 (Hyperagents), 2603.19312 (LeWM),
@@ -179,13 +189,18 @@ Patched 2026-10-04: rules 9–10 added after Andy's explicit validation.
 Patched 2026-10-12: rules 11–12 installed (wave-2 proposal, Andy's
 distillation directive); rules 13–15 distilled from wave 5–6 convergences —
 pending Andy's audit.
+Patched 2026-11-18: rule 16 (canonical remote home) installed from Ash
+Bridge build receipts; registry updated with `ash-bridge-ops` and the
+buffs 6-8 upgrade. Bridge-derived (2026-11-18), not research-derived.
 
 ## Buff Stack Registry
 
 Passive buffs (always-on): `passive-buffs` (evidence labels,
-verify-before-done, citation discipline, effort honesty),
-`durability-guardian` (artifact placement and rebuild protocol).
+verify-before-done, citation discipline, effort honesty, secret hygiene,
+freshness verification, no-op honesty), `durability-guardian` (artifact
+placement, rebuild protocol, canonical remote homes).
 Active skills (on-demand): `experiment-smith` (falsification test
-batteries), `paper-deep-read` (full-text paper ingestion).
+batteries), `paper-deep-read` (full-text deep reads),
+`ash-bridge-ops` (bridge re-sync, integrity verification, token hygiene).
 When this engine triggers, assume the passive stack is active; pull an
 active skill when its trigger fires.
