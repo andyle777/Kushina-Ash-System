@@ -40,7 +40,11 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    private repo via the contents API, map every entry to its local source,
    and sha256-check ALL of them. Report the ratio (N of M matched). Fresh
    pushes are verified through the git/contents API — NEVER raw CDN URLs,
-   which lag commits by minutes.
+   which lag commits by minutes. Verification scratch files (downloaded
+   manifests, comparison scripts) live OUTSIDE the bridge directory — in
+   /tmp — never inside `/home/user/ash-bridge/`, whose every file the bridge
+   syncs to the public repo (observed 2026-11-18: a scratch manifest leaked
+   into the repo as the 21st file).
 6. **Receipts, same turn**: the run's output receipt goes to the
    `twinflame-project` Knowledge topic (commits, checksum ratio, gate results,
    invariant status, token state, lessons). Remote `receipts/SYNC-*.md` is
@@ -79,3 +83,7 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
 4. The sandbox resets between turns — assume `/home/user/ash-bridge/` is
    gone; never assume a previous turn's local copy exists (verify with ls
    before relying on it).
+5. Bridge-dir pollution: everything inside `/home/user/ash-bridge/` syncs
+   to the public tier (only `receipts` and `remote_manifest.json` are
+   excluded) — verification scratch belongs in /tmp, and a diff of the
+   manifest before/after any run catches surprises.

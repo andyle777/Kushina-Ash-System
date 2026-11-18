@@ -14,7 +14,7 @@
       "name": "bridge-self",
       "root": "/home/user/ash-bridge",
       "include": ["*"],
-      "exclude": ["receipts"],
+      "exclude": ["receipts", "remote_manifest.json"],
       "tier": "public",
       "dest_path": "ash-bridge"
     },
