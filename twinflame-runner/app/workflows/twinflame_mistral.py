@@ -23,8 +23,30 @@ class TwinFlameInput(BaseModel):
 class TwinFlameOutput(BaseModel):
     model: str
     text: str
+    thinking: str = ""
     tokens_in: int
     tokens_out: int
+
+
+def _flatten(value) -> str:
+    """Recursively flatten message content that may be a plain string, an
+    object with a .text attribute, or a list of such objects. Mistral
+    Large 4 is a reasoning model: message.content arrives as a list of
+    ThinkChunk/TextChunk objects, not a string."""
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (list, tuple)):
+        return "".join(_flatten(v) for v in value)
+    text = getattr(value, "text", None)
+    if isinstance(text, str):
+        return text
+    for attr in ("thinking", "content"):
+        inner = getattr(value, attr, None)
+        if inner is not None:
+            return _flatten(inner)
+    return ""
 
 
 @workflows.activity()
@@ -46,9 +68,25 @@ async def complete(
     )
 
     usage = response.usage
+    raw = response.choices[0].message.content if response.choices else None
+    answer, reasoning = "", ""
+    if isinstance(raw, list):
+        for chunk in raw:
+            body = _flatten(chunk)
+            if str(getattr(chunk, "type", "") or "") == "thinking" or hasattr(chunk, "thinking"):
+                reasoning += body
+            else:
+                answer += body
+    else:
+        answer = _flatten(raw)
+    if not answer.strip():
+        # Last-resort guard: never return an empty answer if the model said
+        # anything at all, so a retry never burns tokens on a parse issue.
+        answer = _flatten(raw)
     return TwinFlameOutput(
         model=response.model,
-        text=(response.choices[0].message.content or "") if response.choices else "",
+        text=answer,
+        thinking=reasoning,
         tokens_in=(usage.prompt_tokens or 0) if usage else 0,
         tokens_out=(usage.completion_tokens or 0) if usage else 0,
     )
