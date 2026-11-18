@@ -1,4 +1,4 @@
-"""TwinFlame Mistral runner — worker entrypoint.
+"""TwinFlame Mistral runner - worker entrypoint.
 
 Discovers the TwinFlame workflows and hands them to run_worker. Auth is
 resolved automatically: MISTRAL_SA_TOKEN_PATH on managed deployments,

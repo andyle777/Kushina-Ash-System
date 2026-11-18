@@ -16,7 +16,7 @@ class TwinFlameInput(BaseModel):
     prompt: str
     system: str | None = None
     model: str = "mistral-large-4"
-    max_tokens: int = 2048
+    max_tokens: int = 4096
     temperature: float = 0.3
 
 
