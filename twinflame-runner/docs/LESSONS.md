@@ -39,3 +39,18 @@ time for a 2.5k-token answer.
 **When running a duel, then pre-commit each contestant's answer to a file
 before reading the other's output.** No peeking, no rewriting after the
 reveal - otherwise the receipt is worthless.
+
+## 6. Greedy sampling needs top_p=1
+
+**When calling the Mistral API with `temperature: 0`, then also set
+`top_p: 1` - the API rejects greedy sampling otherwise** (HTTP 400,
+`invalid_request_greedy_sampling`, code 3054). For duels, temperature 0.3
+avoids the whole issue.
+
+## 7. Tiny budgets truncate mid-thinking; the fallback mixes traces
+
+**When `max_tokens` is too small, a reasoning model can be cut off before
+emitting any text chunk at all.** The worker's never-return-empty guard
+then pours the thinking trace into `text` so nothing is lost. This is by
+design, but it means: never judge a truncated run's `text` field as the
+model's answer. Budget 4096+ for real runs.
