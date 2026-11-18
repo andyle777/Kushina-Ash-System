@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ash Bridge v1.0: the sync between Andy's Vibe stack and GitHub tiers.
+"""Ash Bridge v1.1: the sync between Andy's Vibe stack and GitHub tiers.
 
 Bridges three sources to two GitHub destinations:
   - custom skills (Andy-authored) -> public repo  vibe-stack/skills/
@@ -12,6 +12,10 @@ credential patterns. Phase 2 hook: a twinflame-hybrid classifier for
 ambiguous items (see bridge_config.json).
 
 Usage: GH_TOKEN=<github token with repo scope> python3 sync.py [--dry-run]
+       GH_TOKEN=... python3 sync.py --tier public|private
+Idempotent since v1.1: when content is byte-identical to the destination
+tree, no commit is created and the run reports an honest no-op; receipts
+are filed only when something actually changes.
 Stdlib only. Zero credentials in code, config, or receipts.
 """
 
@@ -115,8 +119,9 @@ def collect_rule(cfg, rule):
     return carried, quarantined
 
 
-def push_files(cfg, repo, files, message):
-    """files: list from collect_rule. Returns (commit_sha, pushed_count)."""
+def build_tree(cfg, repo, files):
+    """Stage blobs and build the tree against HEAD.
+    Returns (parent, base_tree, parents, tree, n_entries)."""
     st, ref = api(cfg, "GET", f"/repos/{repo}/git/ref/heads/main")
     if st == 200:
         parent = ref["object"]["sha"]
@@ -151,7 +156,11 @@ def push_files(cfg, repo, files, message):
     st, tree = api(cfg, "POST", f"/repos/{repo}/git/trees", tree_payload)
     if st != 201:
         raise SystemExit(f"tree POST failed: {tree}")
+    return parent, base_tree, parents, tree, len(tree_entries)
 
+
+def push_tree(cfg, repo, parent, parents, tree, message):
+    """Commit the tree and advance main. Returns the new commit SHA."""
     st, new_commit = api(
         cfg,
         "POST",
@@ -177,7 +186,18 @@ def push_files(cfg, repo, files, message):
         )
     if st not in (200, 201):
         raise SystemExit(f"ref update failed for {repo}")
-    return new_commit["sha"], len(tree_entries)
+    return new_commit["sha"]
+
+
+def push_files(cfg, repo, files, message):
+    """files: list from collect_rule. Returns (commit_sha|None, pushed_count).
+    Idempotent: when the resulting tree is byte-identical to HEAD's tree,
+    nothing is committed and (None, 0) is returned (honest no-op)."""
+    parent, base_tree, parents, tree, n = build_tree(cfg, repo, files)
+    if base_tree and tree["sha"] == base_tree:
+        print(f"  [no-op] {repo}: content identical, nothing pushed")
+        return None, 0
+    return push_tree(cfg, repo, parent, parents, tree, message), n
 
 
 def main():
@@ -201,8 +221,9 @@ def main():
     private_files = [f for f in all_files if f["tier"] == "private"]
 
     # Build the manifest (covers BOTH tiers) and add it to the private push set.
+    # v1.1: no volatile timestamp — the manifest is a pure function of the
+    # synced content, so identical state hashes identically (idempotence).
     manifest = {
-        "generated": stamp,
         "tool": "ash-bridge",
         "version": cfg["version"],
         "files": [
@@ -226,23 +247,6 @@ def main():
             "size": len(manifest_json),
         }
     ]
-    manifest_md = (
-        f"# Ash Bridge Sync Manifest\n\n"
-        f"Generated {stamp} by ash-bridge v{cfg['version']}.\n\n"
-        f"- Files carried: {len(all_files)} (public {len(public_files)}, private {len(private_files) - 1})\n"
-        f"- Quarantined: {len(quarantined)}\n\n"
-        f"Per-file sha256 checksums live in `MANIFEST.json`. Integrity check: "
-        f"re-hash any restored file and compare.\n"
-    ).encode()
-    private_files.append(
-        {
-            "src": "<manifest>",
-            "dest": f"receipts/SYNC-{stamp.replace(':', '')}.md",
-            "content": manifest_md,
-            "sha256": hashlib.sha256(manifest_md).hexdigest(),
-            "size": len(manifest_md),
-        }
-    )
 
     print(f"\n[gate] {len(all_files)} carried, {len(quarantined)} quarantined")
     if dry:
@@ -257,21 +261,76 @@ def main():
             public_files,
             f"ash-bridge v{cfg['version']}: bridge + custom skills sync ({stamp})",
         )
-        results["public"] = {"repo": cfg["public_repo"], "commit": sha, "files": n}
-        print(f"[push] public -> {sha[:9]} ({n} files)")
+        if sha:
+            results["public"] = {"repo": cfg["public_repo"], "commit": sha, "files": n}
+            print(f"[push] public -> {sha[:9]} ({n} files)")
+        else:
+            results["public"] = {
+                "repo": cfg["public_repo"],
+                "status": "no-op (content identical)",
+            }
+            print("[skip] public: no changes (idempotent no-op)")
     if private_files:
-        sha, n = push_files(
-            cfg,
-            cfg["private_repo"],
-            private_files,
-            f"ash-bridge v{cfg['version']}: knowledge + save-state archive ({stamp})",
+        # Idempotence probe: a receipt is filed only when the private tree
+        # would actually change, so the archive never gains ceremony commits.
+        _, base_tree, _, probe_tree, _ = build_tree(
+            cfg, cfg["private_repo"], private_files
         )
-        results["private"] = {"repo": cfg["private_repo"], "commit": sha, "files": n}
-        print(f"[push] private -> {sha[:9]} ({n} files)")
+        if base_tree and probe_tree["sha"] == base_tree:
+            results["private"] = {
+                "repo": cfg["private_repo"],
+                "status": "no-op (content identical)",
+            }
+            print("[skip] private: no changes (idempotent no-op)")
+        else:
+            pub = results.get("public", {})
+            pub_desc = (
+                f"pushed {pub['commit'][:9]} ({pub['files']} files)"
+                if pub.get("commit")
+                else pub.get("status", "not part of this run")
+            )
+            manifest_md = (
+                f"# Ash Bridge Sync Receipt\n\n"
+                f"Run {stamp} by ash-bridge v{cfg['version']}. Receipts are filed "
+                f"only when content changes (idempotent sync since v1.1).\n\n"
+                f"- Files carried: {len(all_files)} (public {len(public_files)}, "
+                f"private {len(private_files) - 1})\n"
+                f"- Quarantined: {len(quarantined)}\n"
+                f"- Public tier: {pub_desc}\n\n"
+                f"Per-file sha256 checksums live in `MANIFEST.json`. Integrity "
+                f"check: re-hash any restored file and compare.\n"
+            ).encode()
+            private_files.append(
+                {
+                    "src": "<manifest>",
+                    "dest": f"receipts/SYNC-{stamp.replace(':', '')}.md",
+                    "content": manifest_md,
+                    "sha256": hashlib.sha256(manifest_md).hexdigest(),
+                    "size": len(manifest_md),
+                }
+            )
+            sha, n = push_files(
+                cfg,
+                cfg["private_repo"],
+                private_files,
+                f"ash-bridge v{cfg['version']}: knowledge + save-state archive ({stamp})",
+            )
+            results["private"] = {"repo": cfg["private_repo"], "commit": sha, "files": n}
+            print(f"[push] private -> {sha[:9]} ({n} files)")
 
     print("\n[receipt]")
     print(json.dumps(results, indent=2))
-    print(f"\nDONE {stamp}: {len(all_files)} files, {len(quarantined)} quarantined.")
+    pushed = sum(1 for v in results.values() if v.get("commit"))
+    if pushed:
+        print(
+            f"\nDONE {stamp}: {len(all_files)} files, "
+            f"{len(quarantined)} quarantined, {pushed} tier(s) pushed."
+        )
+    else:
+        print(
+            f"\nDONE {stamp}: NO CHANGES. {len(all_files)} files inspected, "
+            f"{len(quarantined)} quarantined; all tiers already current."
+        )
 
 
 if __name__ == "__main__":

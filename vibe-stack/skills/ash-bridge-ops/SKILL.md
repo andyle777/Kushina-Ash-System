@@ -1,6 +1,8 @@
 ---
-name: ash-bridge-ops
-description: Load for any Ash Bridge operation — re-syncing skills or Knowledge to GitHub, verifying archive integrity, rotating or auditing bridge tokens, or rebuilding the bridge after a sandbox reset. Owns the rebuild-dry-run-fire-verify-receipt pipeline and bridge token hygiene.
+name: |
+  ash-bridge-ops
+description: |
+  Load for any Ash Bridge operation — re-syncing skills or Knowledge to GitHub, verifying archive integrity, rotating or auditing bridge tokens, or rebuilding the bridge after a sandbox reset. Owns the rebuild-dry-run-fire-verify-receipt pipeline and bridge token hygiene.
 ---
 
 # Ash Bridge Ops
@@ -59,9 +61,12 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
   before claiming success.
 - **Secret gate**: quarantined count must be 0 for a clean run; anything
   quarantined gets reported, never silently dropped.
-- **No-op honesty**: a re-run on unchanged content creates a metadata-only
-  commit (same tree, new SHA). Acceptable, but name it — and prefer
-  detecting "no changes" before pushing ceremony. (U6 hardening owns the fix.)
+- **No-op honesty**: re-running the bridge on unchanged content is a true
+  no-op since v1.1.0 (tree comparison before commit; manifest is a pure
+  function of content; receipts filed only on change). Report no-op runs as
+  what they are — inspections, not syncs. For `--tier` single-tier runs:
+  they still write a partial manifest over the canonical one, so follow any
+  `--tier` run with a full run.
 
 ## Token hygiene (hard rules)
 
@@ -79,7 +84,9 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
 
 1. Git-data API 409s on empty repos — bootstrap via contents API PUT first.
 2. Raw CDN lags commits by minutes — verify via API.
-3. Full re-runs on identical trees create metadata-only commits.
+3. Full re-runs on identical trees used to create metadata-only commits —
+   FIXED in v1.1.0 (idempotent tree comparison; identical content produces
+   no commit).
 4. The sandbox resets between turns — assume `/home/user/ash-bridge/` is
    gone; never assume a previous turn's local copy exists (verify with ls
    before relying on it).

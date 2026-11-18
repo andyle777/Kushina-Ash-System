@@ -1,6 +1,6 @@
 # Ash Bridge
 
-**v1.0.0 (2026-11-18).** The ultimate bridge between Andy's Vibe stack
+**v1.1.0 (2026-11-18).** The ultimate bridge between Andy's Vibe stack
 (custom Skills, Knowledge, save states) and GitHub as the durable second
 home. Built to the durability-audit remedy: monthly-tier snapshots with
 checksum manifests, so any rebuild is verifiable.
@@ -10,7 +10,7 @@ checksum manifests, so any rebuild is verifiable.
 | Source | Destination tier | Path |
 |---|---|---|
 | The bridge itself (`ash-bridge/`) | public (`Kushina-Ash-System`) | `ash-bridge/` |
-| Custom skills (16, Andy-authored) | public (`Kushina-Ash-System`) | `vibe-stack/skills/<name>/` |
+| Custom skills (17, Andy-authored) | public (`Kushina-Ash-System`) | `vibe-stack/skills/<name>/` |
 | Knowledge topics (all) | private (`Kushina-Ash-Archive`) | `knowledge/<topic>/` |
 | Sync manifest + receipts | private (`Kushina-Ash-Archive`) | `MANIFEST.json`, `receipts/SYNC-*.md` |
 | Personality matrix save state | public mirror (manual) | `kushina/personality-matrix.md` |
@@ -37,9 +37,16 @@ Selection is a two-stage hybrid:
 ## Usage
 
 ```bash
-GH_TOKEN=<classic PAT, repo scope> python3 sync.py          # full sync
-GH_TOKEN=... python3 sync.py --dry-run                       # selection + gate only
+GH_TOKEN=<PAT with repo scope> python3 sync.py    # full sync (idempotent)
+GH_TOKEN=... python3 sync.py --dry-run             # selection + gate only
+GH_TOKEN=... python3 sync.py --tier public|private # single-tier repair
 ```
+
+**Idempotent since v1.1:** before committing, the bridge builds the would-be
+tree and compares it to the destination HEAD tree. Byte-identical content
+produces no commit at all — the run reports an honest no-op. The manifest is
+a pure function of content (no volatile timestamp), and a sync receipt is
+filed only when something actually changed.
 
 Stdlib only (urllib, hashlib, json). The token comes from the environment
 and never appears in code, config, or receipts.
@@ -61,6 +68,8 @@ state changes, not automated.
 
 ## Receipts
 
-Each run prints a JSON receipt (repos, commit SHAs, file counts) and files
-`receipts/SYNC-<timestamp>.md` in the private archive. Quarantined files are
-listed with reasons in both the manifest and the receipt.
+Each run prints a JSON receipt (repos, commit SHAs, file counts, or explicit
+no-op status). A `receipts/SYNC-<timestamp>.md` is filed in the private
+archive ONLY when content actually changed; no-op runs file nothing
+(idempotence, v1.1). Quarantined files are listed with reasons in both the
+manifest and the receipt.

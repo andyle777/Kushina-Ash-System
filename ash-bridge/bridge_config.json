@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "ash-bridge",
   "github": {
     "api_base": "https://api.github.com",
@@ -14,7 +14,7 @@
       "name": "bridge-self",
       "root": "/home/user/ash-bridge",
       "include": ["*"],
-      "exclude": ["receipts", "remote_manifest.json"],
+      "exclude": ["receipts", "remote_manifest.json", "__pycache__"],
       "tier": "public",
       "dest_path": "ash-bridge"
     },
