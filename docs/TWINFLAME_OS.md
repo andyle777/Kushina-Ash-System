@@ -84,7 +84,30 @@ The decision and matched signals are returned in `director{}` on every call.
 - **Phase 2:** benchmark duels across layers; verdicts recorded in
   `docs/RECEIPTS.md`; judge prompt tuned on evidence.
 
-## Receipts (Phase 0)
+## Receipts (Phase 0 — run 2026-11-18, revision `71368d4`)
 
-Filled in as the battery runs. See `docs/RECEIPTS.md` for the full battle
-history.
+All six no-key probes PASSED:
+
+| Probe | Execution | Result |
+|---|---|---|
+| T1 mistral canary | `…d100db7c907` | COMPLETED 9.7 s; `mistral-large-4`, 26/512 tok, $0.001093; budget hit during thinking, `truncated: true`, never-return-empty guard fired as designed |
+| T2 hybrid no-key | `…c353a416b` | COMPLETED 71.3 s; director `hybrid`→`degraded-mistral`, honest `degradations` entry ("zai engine failed; degraded to mistral"), Le Chonk 25/2048 tok, 66.7 s latency, `truncated: true` at 2048/2048, judge correctly unused, $0.004318 |
+| TD1 director efficiency | `…d333615a9` | COMPLETED 9.3 s; `auto` → signals `["quick","regex","fix this"]` → `mistral` |
+| TD2 director no-signal | `…cfe16d5e049` | COMPLETED 12.2 s; `auto` → no signals → `hybrid` default → honest `degraded-mistral` |
+| T6 truncation marking | `…b80b5e5e930d` | COMPLETED 5.9 s; `max_tokens: 96` → `truncated: true` at 96/96 |
+| T8 cost math | all above | hand-verified: tokens x list prices matches `cost_usd_est` on every receipt (e.g. T2: 25x$0.70/M + 2048x$2.10/M = $0.004318) |
+
+Build lessons added on the way:
+
+- **Temporal's workflow sandbox rejects module-level `import httpx`** (and
+  module-level `os.environ` reads) in files that define workflows. Fix:
+  import heavy libraries and read env vars inside activities (unsandboxed).
+- **Temporal auto-retries failed activities 3x by default** (~1 s apart) even
+  for deterministic missing-key failures. Zero token burn, ~4 s added on
+  degraded paths; tuning candidate for Phase 1 (fail-fast retry policy on
+  `zai_layer`).
+
+Known behavior on record: probes T1/TD1/TD2/T6 used deliberately small
+token budgets, so the reasoning model spent them on thinking; receipts
+flag `truncated: true` and the never-return-empty guard reports thinking
+as text. Production calls use 4096+ budgets.
