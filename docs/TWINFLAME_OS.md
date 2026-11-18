@@ -135,3 +135,22 @@ the free ZCode trial) enter the hybrid judge as a first-class receipt:
 
 This runs the entire Phase 2 gauntlet at effectively zero Layer-2 cost:
 only Le Chonk's answer and the judge pass ride the Mistral plan.
+
+## BYO wiring-test receipts (2026-11-18)
+
+| Run | Exec | Revision | Result |
+|---|---|---|---|
+| T-BYO-1 | `…f0c39f96` | `5b6208f` | Wiring PASS, but `verdict: "unparsed"` + EMPTY fused answer. Judge reused task's 1024-token budget, spent it all thinking, truncated before the VERDICT line; never-return-empty guard existed only in mistral_layer. |
+| T-BYO-2 | `…f8e5bf` | `5b6208f` | Reproduction, n=2. Same unparsed verdict, empty answer. |
+| T-BYO-3 | `…352b34ad` | `a38ccac` | **FULL PASS**: verdict `synthesis`, fused answer clean, judge tokens_out 2209 (decoupled 4096 budget), labels flipped vs T-BYO-1 (A=mistral/B=zai after A=zai/B=mistral), BYO receipt `source: "zcode-trial-sim"` cost 0, total $0.007225 exact. |
+
+Lessons added on the way:
+
+- **A thinking-heavy judge can burn a small budget before reaching the
+  VERDICT line.** The judge gets her own budget: `max(max_tokens, 4096)`.
+- **Never-return-empty must be ported to EVERY model-calling activity.**
+  An unparseable judge now raises and degrades honestly (tiebreak to the
+  non-judge engine) instead of returning an empty answer.
+- **Worker recycle waves during rollout can claim in-flight activity
+  tasks**; the execution stalls up to the StartToClose timeout (~2 min)
+  and then resumes. Fire tests after the rollout settles, not at ready.
