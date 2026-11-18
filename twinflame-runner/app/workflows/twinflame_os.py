@@ -17,12 +17,10 @@ Degradation is always honest: every fallback lands in `degradations[]`.
 """
 
 import asyncio
-import os
 import random
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
-import httpx
 from pydantic import BaseModel
 
 import mistralai.workflows as workflows
@@ -31,10 +29,10 @@ from mistralai.workflows.client import get_mistral_client
 
 from app.workflows.twinflame_mistral import _flatten
 
-ZAI_ENDPOINT = os.environ.get(
-    "ZAI_ENDPOINT", "https://api.z.ai/api/paas/v4/chat/completions"
-)
-ZAI_MODEL = os.environ.get("ZAI_MODEL", "glm-5.3")
+# Env reads happen INSIDE activities (unsandboxed). Module-level os.environ
+# access runs inside the Temporal workflow sandbox and is restricted.
+ZAI_ENDPOINT_DEFAULT = "https://api.z.ai/api/paas/v4/chat/completions"
+ZAI_MODEL_DEFAULT = "glm-5.3"
 ENGINE_TIMEOUT_S = 120
 
 # Published list prices, USD per 1M tokens (input, output). Estimates only.
@@ -216,7 +214,13 @@ def _extract_zai(message: Dict[str, Any]) -> Tuple[str, str]:
 
 @workflows.activity()
 async def zai_layer(task: TwinFlameOSInput) -> EngineReceipt:
+    import os  # activity-local: sandbox-safe
+
+    import httpx  # activity-local: importing httpx at module level breaks the Temporal workflow sandbox
+
     api_key = os.environ.get("ZAI_API_KEY", "").strip()
+    endpoint = os.environ.get("ZAI_ENDPOINT", ZAI_ENDPOINT_DEFAULT)
+    model = os.environ.get("ZAI_MODEL", ZAI_MODEL_DEFAULT)
     if not api_key:
         raise RuntimeError("ZAI_API_KEY is not bound to this deployment")
 
@@ -227,7 +231,7 @@ async def zai_layer(task: TwinFlameOSInput) -> EngineReceipt:
     messages.append({"role": "user", "content": task.prompt})
 
     body: Dict[str, Any] = {
-        "model": ZAI_MODEL,
+        "model": model,
         "messages": messages,
         "max_tokens": task.max_tokens,
         "temperature": task.temperature,
@@ -238,7 +242,7 @@ async def zai_layer(task: TwinFlameOSInput) -> EngineReceipt:
 
     async with httpx.AsyncClient(timeout=ENGINE_TIMEOUT_S) as http:
         resp = await http.post(
-            ZAI_ENDPOINT,
+            endpoint,
             json=body,
             headers={
                 "Authorization": f"Bearer {api_key}",
@@ -259,14 +263,14 @@ async def zai_layer(task: TwinFlameOSInput) -> EngineReceipt:
         raise RuntimeError("Z.ai returned an empty response")
 
     return EngineReceipt(
-        engine=ZAI_MODEL,
+        engine=model,
         text=text,
         thinking=thinking,  # full trace, nothing redacted (ruling #4)
         tokens_in=tokens_in,
         tokens_out=tokens_out,
         latency_ms=latency_ms,
         truncated=_truncated(tokens_out, task.max_tokens),
-        cost_usd_est=_cost(ZAI_MODEL, tokens_in, tokens_out),
+        cost_usd_est=_cost(model, tokens_in, tokens_out),
     )
 
 
