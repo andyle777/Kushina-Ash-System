@@ -343,6 +343,11 @@ async def hybrid_judge(
         f"=== Answer B ===\n{_annotated(label_b_engine, answer_b)}"
     )
 
+    # The judge gets her own generous budget: fusing two full answers plus
+    # reasoning needs more than an engine answer, and Andy's ruling #3 says
+    # full power regardless of cost. (Lesson: a truncated judge that never
+    # reaches the VERDICT line is an unparseable judge, not a quiet pass.)
+    judge_max_tokens = max(task.max_tokens, 4096)
     t0 = time.monotonic()
     response = await client.chat.complete_async(
         model=task.judge_model,
@@ -350,7 +355,7 @@ async def hybrid_judge(
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        max_tokens=task.max_tokens,
+        max_tokens=judge_max_tokens,
         temperature=task.temperature,
     )
     latency_ms = int((time.monotonic() - t0) * 1000)
@@ -387,6 +392,18 @@ async def hybrid_judge(
                 break
         if verdict != "unparsed":
             break
+
+    # Never-return-empty + honest-judge guards (lesson #5, ported to the
+    # judge): an output with no parseable VERDICT line or no usable fused
+    # text is an unparseable judge, never a quiet empty answer. Raise and
+    # let the workflow's deterministic tiebreak fire with a degradation
+    # note; the judge's thinking is preserved in the failure message.
+    if verdict == "unparsed" or not fused.strip():
+        raise RuntimeError(
+            "judge output unparseable (no VERDICT line or empty fused answer; "
+            f"likely truncated at tokens_out={tokens_out}); "
+            f"thinking tail: {reasoning[-200:]}"
+        )
 
     receipt = JudgeReceipt(
         used=True,
