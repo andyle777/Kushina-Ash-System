@@ -2,7 +2,7 @@
 name = "twinflame-runner"
 version = "0.1.0"
 description = "TwinFlame Mistral runner: a Mistral Workflow that answers one prompt via Mistral Large 4 using the deployment service account."
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "mistralai-workflows>=3.10",
     "pydantic>=2.7",
