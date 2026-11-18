@@ -111,3 +111,27 @@ Known behavior on record: probes T1/TD1/TD2/T6 used deliberately small
 token budgets, so the reasoning model spent them on thinking; receipts
 flag `truncated: true` and the never-return-empty guard reports thinking
 as text. Production calls use 4096+ budgets.
+
+## BYO challenger mode (free-path, 2026-11-18)
+
+First-principles finding: no verified free API route for GLM-5.3 exists
+(OpenRouter catalog checked live: 22 GLM models, zero free variants;
+NVIDIA NIM hosts only glm-5.3-flash). But ZCode's new-user trial gives
+**5 days x 3M GLM-5.3 tokens/day with no payment method** — locked inside
+the ZCode desktop app, unroutable by API.
+
+The seam: the judge does not need an API call, she needs an answer. New
+optional input fields (`zai_answer`, `zai_thinking`, `zai_source`,
+`zai_tokens_in/out`) let a pre-harvested GLM-5.3 answer (e.g. pasted from
+the free ZCode trial) enter the hybrid judge as a first-class receipt:
+
+- The judge stays blind and randomizes labels exactly as in API mode.
+- The receipt is honest: `source: "zcode-trial"` (or given label),
+  `cost_usd_est: 0.0` (harvested free, not API-billed), tokens only if
+  supplied.
+- `layer: zai` with a supplied answer returns it directly, no API call.
+- Degradation ladder unchanged; a judge failure tiebreaks to the BYO
+  answer, honestly noted.
+
+This runs the entire Phase 2 gauntlet at effectively zero Layer-2 cost:
+only Le Chonk's answer and the judge pass ride the Mistral plan.

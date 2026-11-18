@@ -83,6 +83,14 @@ class TwinFlameOSInput(BaseModel):
     max_tokens: int = 4096
     temperature: float = 0.3
     judge_model: str = "mistral-large-4"
+    # BYO challenger mode: supply a pre-harvested GLM answer instead of
+    # calling the Z.ai API (e.g. free-tier ZCode trial output pasted back).
+    # The judge stays blind either way; receipts mark source honestly.
+    zai_answer: Optional[str] = None
+    zai_thinking: Optional[str] = None
+    zai_source: Optional[str] = None  # e.g. "zcode-trial", "manual"
+    zai_tokens_in: int = 0
+    zai_tokens_out: int = 0
 
 
 class EngineReceipt(BaseModel):
@@ -94,6 +102,7 @@ class EngineReceipt(BaseModel):
     latency_ms: int = 0
     truncated: bool = False
     cost_usd_est: float = 0.0
+    source: str = "api"  # "api" | "byo" (pre-harvested, cost not API-measured)
 
 
 class JudgeReceipt(BaseModel):
@@ -126,6 +135,22 @@ def _cost(engine: str, tokens_in: int, tokens_out: int) -> float:
 
 def _truncated(tokens_out: int, max_tokens: int) -> bool:
     return tokens_out > 0 and tokens_out >= max_tokens
+
+
+def _byo_receipt(task: TwinFlameOSInput) -> EngineReceipt:
+    """Build an honest receipt for a pre-harvested GLM answer (BYO mode).
+    Pure and deterministic: safe to call inside the workflow."""
+    return EngineReceipt(
+        engine="glm-5.3",
+        text=task.zai_answer or "",
+        thinking=task.zai_thinking or "",
+        tokens_in=task.zai_tokens_in,
+        tokens_out=task.zai_tokens_out,
+        latency_ms=0,
+        truncated=False,
+        cost_usd_est=0.0,  # harvested free (e.g. ZCode trial); not API-billed
+        source=task.zai_source or "byo",
+    )
 
 
 # --- Layer 1: Mistral ---
@@ -415,23 +440,35 @@ class TwinFlameOSWorkflow:
             answer = r.text
 
         elif decision == "zai":
-            try:
-                r = await zai_layer(task)
+            if task.zai_answer is not None:
+                r = _byo_receipt(task)
                 engines.append(r)
                 answer = r.text
-            except Exception as exc:
-                degradations.append(f"zai layer failed ({exc}); degraded to mistral")
-                r = await mistral_layer(task)
-                engines.append(r)
-                answer = r.text
-                layer_used = "degraded-mistral"
+            else:
+                try:
+                    r = await zai_layer(task)
+                    engines.append(r)
+                    answer = r.text
+                except Exception as exc:
+                    degradations.append(f"zai layer failed ({exc}); degraded to mistral")
+                    r = await mistral_layer(task)
+                    engines.append(r)
+                    answer = r.text
+                    layer_used = "degraded-mistral"
 
         else:  # hybrid
-            m_res, z_res = await asyncio.gather(
-                mistral_layer(task), zai_layer(task), return_exceptions=True
-            )
-            m = m_res if not isinstance(m_res, BaseException) else None
-            z = z_res if not isinstance(z_res, BaseException) else None
+            if task.zai_answer is not None:
+                # BYO challenger: GLM answer pre-harvested (e.g. free ZCode
+                # trial); only the Mistral side hits an API.
+                m_res = await mistral_layer(task)
+                m = None if isinstance(m_res, BaseException) else m_res
+                z = _byo_receipt(task)
+            else:
+                m_res, z_res = await asyncio.gather(
+                    mistral_layer(task), zai_layer(task), return_exceptions=True
+                )
+                m = m_res if not isinstance(m_res, BaseException) else None
+                z = z_res if not isinstance(z_res, BaseException) else None
             if m is None and z is None:
                 raise RuntimeError(
                     f"both engines failed: mistral={m_res}; zai={z_res}"

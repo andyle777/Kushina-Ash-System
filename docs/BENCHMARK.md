@@ -68,3 +68,22 @@ fusion > replacement).
 - n=1 per prompt per layer: this is a first benchmark pass, not
   statistics. Phase 2 conclusions are directional until repeated runs
   land.
+
+## Free-path protocol (BYO challenger)
+
+Phase 2 can run before any Z.ai billing exists:
+
+1. Andy creates a new Z.ai account and installs ZCode (desktop app).
+   New-user trial: 5 days x 3M GLM-5.3 tokens/day, no payment method.
+2. For each gauntlet prompt, Andy harvests GLM-5.3's answer in ZCode and
+   pastes it back (with its thinking, if shown).
+3. Vibe fires `twinflame-os` with `layer: "hybrid"` plus
+   `zai_answer`/`zai_thinking`/`zai_source: "zcode-trial"`: Le Chonk
+   answers live on the Mistral plan, the judge fuses blind, receipts
+   mark the BYO source and zero API cost.
+4. Honest caveats on record: trial terms are per ZCode's docs (verify in
+   the app); ZCode's GLM-5.3 is the same model but may carry app-side
+   scaffolding; n=1 per cell is directional, not statistics.
+
+When a standard Z.ai API key exists later, the same battery re-runs in
+full API mode and the two receipt sets compare BYO vs API fidelity.
