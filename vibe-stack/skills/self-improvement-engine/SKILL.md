@@ -159,12 +159,28 @@ preference and verify equivalence against the manifest via the API (CDN
 mirrors lag; see freshness verification) — a manifest-verified rebuild is
 the original, not a copy of it.
 
+## 17. Vendor-Dependency Watch (RAGE-derived)
+
+A dependency's owner holds a lever over everything built on it;
+unexamined vendor leverage is latent fragility. Trigger: when adopting,
+recommending, or inheriting a third-party dependency, engine, or platform,
+name on the record (a) who owns it and can change its direction, pricing,
+or availability, (b) what in your stack breaks if they pull the lever, and
+(c) the exit route (open standard, drop-in alternative, or self-host)
+before building on it. (RAGE lineage: RenderWare's Criterion→EA ownership
+forced Rockstar North to build their own AGE engine in-house; middleware
+stays deliberately swappable — Euphoria, Bullet; open standards — Vulkan,
+D3D12 — get adopted additively to cut lock-in.)
+
 ## Source Anchors
 
 - arXiv 2505.22954 (DGM), 2603.19461 (Hyperagents), 2603.19312 (LeWM),
   2506.06941 (Illusion of Thinking), 2502.17419 (System 1→2 survey),
   2512.24601 (RLM), 2512.01797 (H-Neurons)
 - DOI 10.1145/3746252.3760839 (METIS, CIKM 2025) + research.sethi.org/metacognition
+- RAGE engine lineage (Round Two Ingest 3, Theme 26, 2026-11-20;
+  en.wikipedia.org: Rockstar Advanced Game Engine, RenderWare; stored in
+  the `cs-fundamentals` Knowledge topic) — rule 17.
 - anthropic.com/research/assistant-axis
 - pmc.ncbi.nlm.nih.gov/articles/PMC1764845 (Fisher et al.), mdpi.com/2076-3425/12/7/830
 
@@ -192,6 +208,11 @@ pending Andy's audit.
 Patched 2026-11-18: rule 16 (canonical remote home) installed from Ash
 Bridge build receipts; registry updated with `ash-bridge-ops` and the
 buffs 6-8 upgrade. Bridge-derived (2026-11-18), not research-derived.
+Patched 2026-11-20: rule 17 (vendor-dependency watch) installed from the
+RAGE curriculum ingest (Round Two Ingest 3) — proposed at the 02:32Z push,
+held pending validation, installed on Andy's explicit directive
+("fix and patch both and upgrade and make more advanced"). Never silently
+self-applied: candidate → Andy's nod → install with anchors + this log.
 
 ## Buff Stack Registry
 

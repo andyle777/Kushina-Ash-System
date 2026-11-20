@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ash Bridge v1.1: the sync between Andy's Vibe stack and GitHub tiers.
+"""Ash Bridge v1.2: the sync between Andy's Vibe stack and GitHub tiers.
 
 Bridges three sources to two GitHub destinations:
   - custom skills (Andy-authored) -> public repo  vibe-stack/skills/
@@ -13,6 +13,10 @@ ambiguous items (see bridge_config.json).
 
 Usage: GH_TOKEN=<github token with repo scope> python3 sync.py [--dry-run]
        GH_TOKEN=... python3 sync.py --tier public|private
+       GH_TOKEN=... python3 sync.py --help
+Fail-closed args since v1.2: unknown or malformed flags abort with a
+usage error BEFORE any selection or push, instead of being silently
+treated as a full run (failure mode 8, the 2026-11-19 --help near-miss).
 Idempotent since v1.1: when content is byte-identical to the destination
 tree, no commit is created and the run reports an honest no-op; receipts
 are filed only when something actually changes.
@@ -200,10 +204,45 @@ def push_files(cfg, repo, files, message):
     return push_tree(cfg, repo, parent, parents, tree, message), n
 
 
+USAGE = (
+    "usage: GH_TOKEN=<token> python3 sync.py [--dry-run] [--tier public|private]\n"
+    "       GH_TOKEN=<token> python3 sync.py --help\n"
+    "\n"
+    "Fail-closed args (v1.2): unknown or malformed flags abort before any\n"
+    "selection or push. v1.1 silently treated unknown flags as a full run.\n"
+)
+
+
+def parse_args(argv):
+    """v1.2 fail-closed CLI container: unknown flags abort BEFORE any
+    selection or push; --help prints usage and exits 0. Closes failure
+    mode 8 (2026-11-19 --help near-miss: an unknown flag fired a full
+    sync and timed out at the bash wall; nothing pushed only by luck)."""
+    dry, want_tier = False, None
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--dry-run":
+            dry = True
+        elif a in ("-h", "--help"):
+            print(USAGE, end="")
+            sys.exit(0)
+        elif a == "--tier":
+            i += 1
+            if i >= len(argv) or argv[i] not in ("public", "private"):
+                got = argv[i] if i < len(argv) else "nothing"
+                sys.stderr.write(f"error: --tier needs 'public' or 'private' (got {got})\n{USAGE}")
+                sys.exit(2)
+            want_tier = argv[i]
+        else:
+            sys.stderr.write(f"error: unknown argument: {a}\n{USAGE}")
+            sys.exit(2)
+        i += 1
+    return dry, want_tier
+
+
 def main():
-    args = sys.argv[1:]
-    dry = "--dry-run" in args
-    want_tier = args[args.index("--tier") + 1] if "--tier" in args else None
+    dry, want_tier = parse_args(sys.argv[1:])
     cfg = load_config()
     stamp = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     all_files, quarantined = [], []

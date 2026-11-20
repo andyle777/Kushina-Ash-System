@@ -1,6 +1,6 @@
 # Ash Bridge
 
-**v1.1.0 (2026-11-18).** The ultimate bridge between Andy's Vibe stack
+**v1.2.0 (2026-11-20).** The ultimate bridge between Andy's Vibe stack
 (custom Skills, Knowledge, save states) and GitHub as the durable second
 home. Built to the durability-audit remedy: monthly-tier snapshots with
 checksum manifests, so any rebuild is verifiable.
@@ -40,7 +40,14 @@ Selection is a two-stage hybrid:
 GH_TOKEN=<PAT with repo scope> python3 sync.py    # full sync (idempotent)
 GH_TOKEN=... python3 sync.py --dry-run             # selection + gate only
 GH_TOKEN=... python3 sync.py --tier public|private # single-tier repair
+GH_TOKEN=... python3 sync.py --help                # usage; exits 0, pushes nothing
 ```
+
+**Fail-closed args since v1.2:** unknown or malformed flags abort with a
+usage error BEFORE any selection or push. v1.1 silently treated unknown
+flags as a full run — a `--help` probe once fired a live sync by accident
+(the 2026-11-19 near-miss). No data was pushed by luck + idempotence;
+v1.2 removes the luck: the CLI container is now stable per engine rule 12.
 
 **Idempotent since v1.1:** before committing, the bridge builds the would-be
 tree and compares it to the destination HEAD tree. Byte-identical content

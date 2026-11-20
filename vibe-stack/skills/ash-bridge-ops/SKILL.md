@@ -40,7 +40,10 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    screenshot of the token settings page and analyze it — one round of
    visible UI state ended three rounds of 403s.
 3. **Dry-run first**: `GH_TOKEN=<pat> python3 sync.py --dry-run`. Check the
-   selection counts and the quarantined list before any push.
+   selection counts and the quarantined list before any push. Since bridge
+   v1.2.0 the CLI is fail-closed: `--help` is a safe read-only probe and
+   unknown flags abort before any selection — but the dry-run gate stays
+   mandatory before every real fire.
 4. **Fire**: full run (`python3 sync.py`, no `--tier`) for the canonical
    both-tier manifest. A `--tier` run writes an honest but partial manifest;
    only use it for single-tier repairs, then follow with a full run.
@@ -120,7 +123,12 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    directories vanish with the bridge cache; re-stage from transcript, and
    keep all re-staging outside sync roots (2026-11-19/20 pattern, survived
    because tokens never live in synced directories).
-8. sync.py has no `--help` and treats unknown args as a FULL run — a
-   `--help` probe was treated as a fire and timed out at the bash wall
-   (near-miss, 2026-11-19; nothing pushed because the tree was identical).
-   Read the script's argument handling before probing flags.
+8. sync.py v1.1 treated unknown args as a FULL run — a `--help` probe was
+   treated as a fire and timed out at the bash wall (near-miss, 2026-11-19;
+   nothing pushed because the tree was identical). **FIXED in bridge
+   v1.2.0 (2026-11-20): fail-closed argument validation — unknown or
+   malformed flags abort with a usage error before ANY selection or push;
+   `--help` prints usage and exits 0. Verified by a discriminating battery
+   (help/unknown/tier-missing → exits 0/2/2, both repos' HEADs
+   byte-identical before and after, zero pollution).** Historical note
+   kept: read a script's argument handling before probing flags.
