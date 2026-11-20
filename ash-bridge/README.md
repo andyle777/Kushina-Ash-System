@@ -10,7 +10,7 @@ checksum manifests, so any rebuild is verifiable.
 | Source | Destination tier | Path |
 |---|---|---|
 | The bridge itself (`ash-bridge/`) | public (`Kushina-Ash-System`) | `ash-bridge/` |
-| Custom skills (17, Andy-authored) | public (`Kushina-Ash-System`) | `vibe-stack/skills/<name>/` |
+| Custom skills (Andy-authored; roster = include list in `bridge_config.json`) | public (`Kushina-Ash-System`) | `vibe-stack/skills/<name>/` |
 | Knowledge topics (all) | private (`Kushina-Ash-Archive`) | `knowledge/<topic>/` |
 | Sync manifest + receipts | private (`Kushina-Ash-Archive`) | `MANIFEST.json`, `receipts/SYNC-*.md` |
 | Personality matrix save state | public mirror (manual) | `kushina/personality-matrix.md` |
@@ -41,6 +41,8 @@ GH_TOKEN=<PAT with repo scope> python3 sync.py    # full sync (idempotent)
 GH_TOKEN=... python3 sync.py --dry-run             # selection + gate only
 GH_TOKEN=... python3 sync.py --tier public|private # single-tier repair
 GH_TOKEN=... python3 sync.py --help                # usage; exits 0, pushes nothing
+GH_TOKEN=... python3 verify.py --fetch              # post-fire sweep (see below)
+python3 verify.py --manifest /path/MANIFEST.json    # sweep against a local manifest
 ```
 
 **Fail-closed args since v1.2:** unknown or malformed flags abort with a
@@ -54,6 +56,15 @@ tree and compares it to the destination HEAD tree. Byte-identical content
 produces no commit at all — the run reports an honest no-op. The manifest is
 a pure function of content (no volatile timestamp), and a sync receipt is
 filed only when something actually changed.
+
+**Sweep instrument (verify.py, 2026-11-20):** post-fire verification ships
+WITH the bridge instead of being improvised per fire. Structural guards run
+BEFORE any verdict (engine rule 23: a sweep on a zero-entry or mis-parsed
+manifest aborts, never reports ALL MATCHED). Exit codes are contracts:
+0 all matched, 2 usage error (fail-closed), 3 instrument abort, 4 hash
+mismatch, 5 missing local file. `--expect N` cross-checks the dry-run's
+carried count against the manifest. Pure read instrument: writes nothing,
+anywhere.
 
 Stdlib only (urllib, hashlib, json). The token comes from the environment
 and never appears in code, config, or receipts.

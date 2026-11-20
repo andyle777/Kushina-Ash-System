@@ -37,7 +37,7 @@ When a mission begins without an explicit cast and matches a play's
 trigger below, announce "Casting GAMBIT X (auto-detect)" first, then
 load the team. Explicit invocation always wins over auto-detect.
 
-## The Gambit Grimoire v1
+## The Gambit Grimoire v1.2
 
 | Play | Invoke | Team (load ALL) | Auto-detect trigger |
 |---|---|---|---|

@@ -323,6 +323,15 @@ from the MedicalOS deep read (Round Two Deep Read 3, arXiv 2509.11507)
 his explicit nod from the roster ("install it, the tuning directive
 stands"). Registry count: 22 rules, four source-anchored, install
 logged. Same gate discipline as 17-21.
+Patched 2026-11-20: rule 23 (validate the verifier on mass failure)
+installed under Andy's license-board nod ("Approve all three");
+proposed during the sibling session's frontmatter-scanner postmortem,
+evidenced by two independent cases (the scanner's 18/18 false
+accusations, the 0-checked sweep false pass), anchor line included
+with the rule. Registry count: 23 rules. Log line added one pass
+late, caught by the same-day deck audit (finding F2): the install was
+complete except this log entry — the deck-keeper battery found the gap,
+closing its own birth-mandate loop.
 
 ## Buff Stack Registry
 
@@ -330,8 +339,13 @@ Passive buffs (always-on): `passive-buffs` (evidence labels,
 verify-before-done, citation discipline, effort honesty, secret hygiene,
 freshness verification, no-op honesty), `durability-guardian` (artifact
 placement, rebuild protocol, canonical remote homes).
-Active skills (on-demand): `experiment-smith` (falsification test
-batteries), `paper-deep-read` (full-text deep reads),
-`ash-bridge-ops` (bridge re-sync, integrity verification, token hygiene).
+Active skills (on-demand): the roster source of truth is the
+custom-skills include list in `ash-bridge/bridge_config.json` (checked
+against the local deck by the deck-keeper battery; do not duplicate the
+full list here — copies drift, pointers do not). Commonly summoned:
+`experiment-smith` (falsification batteries), `paper-deep-read` (deep
+raids), `ash-bridge-ops` with `deck-keeper` and `durability-guardian`
+(bridge fires and deck audits), `gambit-cast` (activation-layer
+dispatcher), `heaven-court` (adjudication procedure).
 When this engine triggers, assume the passive stack is active; pull an
 active skill when its trigger fires.
