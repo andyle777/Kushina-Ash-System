@@ -7,8 +7,10 @@ description: |
 
 # Gambit Cast (Activation Layer Director)
 
-Patch v1.1, 2026-11-20 (v1.0 activation layer + Three Pillars doctrine
-binding). Andy's activation-layer upgrade: active skills
+Patch v1.2, 2026-11-20 (v1.1 activation layer + Three Pillars doctrine
+binding; v1.2 Grimoire expansion: DECK CHECK play added and heaven-court
+joined TRIAL, both approved by Andy's license-board nod same day).
+Andy's activation-layer upgrade: active skills
 load as coordinated teams during declared plays ("gambits"), and passive
 buffs fire explicitly on command. Approved by Andy: explicit invocation
 with auto-detect fallback; Grimoire v1 map drafted on his trusted read.
@@ -40,8 +42,9 @@ load the team. Explicit invocation always wins over auto-detect.
 | Play | Invoke | Team (load ALL) | Auto-detect trigger |
 |---|---|---|---|
 | BREAK IT | Gambit: Break It | experiment-smith, challenge-my-thinking, orion-rd-methodology | ask to break, attack, fuzz, or stress-test a claim or artifact |
-| TRIAL | Gambit: Trial | challenge-my-thinking, document-review (+ Court of Heaven Knowledge) | evidence judgment, Court of Heaven work, adversarial weighing of a position |
+| TRIAL | Gambit: Trial | challenge-my-thinking, document-review, heaven-court (+ Court of Heaven Knowledge) | evidence judgment, Court of Heaven work, adversarial weighing of a position |
 | DEEP RAID | Gambit: Deep Raid | paper-deep-read, research-synthesis, self-improvement-engine | a paper or long source assigned for deep structured notes |
+| DECK CHECK | Gambit: Deck Check | deck-keeper, ash-bridge-ops, durability-guardian | a deck check/audit/registry-health request, a missing skill file, or a pre-fire roster check after skill roster changes |
 | ASH RESYNC | Gambit: Ash Resync | ash-bridge-ops, durability-guardian, toolkit-workflow | any bridge fire, sweep, redeploy, canary, receipt, or rebuild work |
 | WAVE | Gambit: Wave | curriculum-wave-distiller, self-improvement-engine | a new curriculum wave, round, or article-set assigned |
 | VOICE FORGE | Gambit: Voice Forge | persona-voice-router, syntax-emulation, united-english-lexicon | tone, persona, dialect, or voice work and style emulation |

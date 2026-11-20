@@ -230,6 +230,26 @@ verify-before-claiming and Rule 19 proof-of-carry — distinct angle: 19
 verifies the signal survives the chain, 22 bans self-report as the
 signal.)
 
+## 23. Validate the Verifier on Mass Failure (instrument-verification-derived)
+
+When a verifier (scanner, sweep, linter, gate) reports mass failure
+or a perfect pass on a degenerate input (empty set, single sample),
+the instrument itself is the prime suspect: validate it on a
+known-good sample before acting on its verdict. A sweep on zero
+entries is not ALL MATCHED; a scanner failing 18 of 18 well-formed
+files indicts the scanner. Trigger: whenever a verification instrument
+reports an extreme verdict (universal failure, perfect pass) or runs
+on a degenerate input, instrument-check before deck-check. (Evidence,
+two independent cases, counted once: the frontmatter scanner that
+falsely accused all 18 custom skills of invalid yaml; the 2026-11-20
+sweep that reported ALL MATCHED on 0-checked after mis-parsing a
+manifest whose files field is a list, caught only by in-script
+spot-check contradiction. Converges with Rule 13 baseline-before-
+anomaly — distinct angle: 13 guards against missing baselines, 23
+guards against trusting a broken instrument on the extreme end.)
+Installed 2026-11-20 under Andy's license-board nod, evidenced in the
+twenty-second bridge fire receipt.
+
 ## Source Anchors
 
 - arXiv 2505.22954 (DGM), 2603.19461 (Hyperagents), 2603.19312 (LeWM),
