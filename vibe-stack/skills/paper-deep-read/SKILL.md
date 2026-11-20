@@ -2,7 +2,7 @@
 name: |
   paper-deep-read
 description: |
-  Load when the user asks to read, deep-dive, or take detailed structured notes on a research paper or long technical article: fetch full text, extract claims with evidence, attack the evidence, and map findings to upgrades for Andy's agent stack.
+  Load when the user asks to read, deep-dive, or take detailed structured notes on a research paper or long technical article: fetch full text, extract claims with evidence, attack the evidence, and map findings to upgrades for Andy's agent stack. Also auto-loads during "Gambit: Deep Raid" casts (gambit-cast protocol).
 ---
 
 # Paper Deep-Read

@@ -2,7 +2,7 @@
 name: |
   curriculum-wave-distiller
 description: |
-  Load when Andy assigns a new curriculum wave, round, or article-set to ingest into the cs-fundamentals Knowledge topic. Runs the proven round-one pipeline: ingest sources (Grokipedia domain-blocked — use Wikipedia equivalents), write themes + upgrade mappings, distill candidate engine rules with trigger conditions, and update the Round Summary honestly.
+  Load when Andy assigns a new curriculum wave, round, or article-set to ingest into the cs-fundamentals Knowledge topic. Runs the proven round-one pipeline: ingest sources (Grokipedia domain-blocked — use Wikipedia equivalents), write themes + upgrade mappings, distill candidate engine rules with trigger conditions, and update the Round Summary honestly. Also auto-loads during "Gambit: Wave" casts (gambit-cast protocol).
 ---
 
 # Curriculum Wave Distiller

@@ -2,7 +2,7 @@
 name: |
   experiment-smith
 description: |
-  Load when the user asks to test, stress-test, attack, break, fuzz, benchmark, verify robustness, or design an experiment that could falsify a hypothesis, artifact, plan, or claim. Builds discriminating test batteries and adversarial attack plans.
+  Load when the user asks to test, stress-test, attack, break, fuzz, benchmark, verify robustness, or design an experiment that could falsify a hypothesis, artifact, plan, or claim. Builds discriminating test batteries and adversarial attack plans. Also auto-loads during "Gambit: Break It" casts (gambit-cast protocol).
 ---
 
 # Experiment Smith

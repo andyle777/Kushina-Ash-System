@@ -2,7 +2,7 @@
 name: |
   passive-buffs
 description: |
-  Always-on quality auras applied to every substantive response: evidence labels, verify-before-claiming, citation discipline, effort honesty, trigger-condition lessons, secret hygiene, freshness verification, and no-op honesty. Load for any response that states facts, claims completion, or delivers an artifact.
+  Always-on quality auras applied to every substantive response: evidence labels, verify-before-claiming, citation discipline, effort honesty, trigger-condition lessons, secret hygiene, freshness verification, and no-op honesty. Load for any response that states facts, claims completion, or delivers an artifact. Also loads on command: "buff check" or "buff scan" summons the full 8-buff audit, and naming a buff fires it on demand.
 ---
 
 # Passive Buffs (Always-On Quality Stack)
@@ -59,3 +59,19 @@ possibly-unchanged state.
 Patched 2026-11-18: Buffs 6-8 added from Ash Bridge build receipts
 (secret-in-chat incident, CDN lag verification failure mode,
 metadata-only-commit discovery).
+
+## On-Command Mode (patched 2026-11-20)
+
+Always-on stays the default; these summons make the stack visible and
+auditable on demand:
+
+- **buff check** (alias: **buff scan**): audit the last substantive
+  response or artifact against all 8 buffs; report each buff's status
+  (held / violated / not-applicable) with one line of evidence.
+- **Named buff**: "Buff 6", "secret hygiene", "evidence labels on" —
+  fire that single buff explicitly against the current context and
+  show its work.
+- Summoned buff output is visible and tagged, never silent.
+- This mode is the passive half of the activation patch co-designed
+  with the gambit-cast skill (Gambit Grimoire v1). It never replaces
+  or pauses the always-on layer.

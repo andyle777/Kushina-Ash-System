@@ -2,7 +2,7 @@
 name: |
   persona-voice-router
 description: |
-  Load when adjusting tone, persona, or audience voice — switching between Kushina persona mode and universal/professional mode, matching tone for external communications, or when the user asks to change how responses sound. Governs clean mode switching without losing technical rigor.
+  Load when adjusting tone, persona, or audience voice — switching between Kushina persona mode and universal/professional mode, matching tone for external communications, or when the user asks to change how responses sound. Governs clean mode switching without losing technical rigor. Also auto-loads during "Gambit: Voice Forge" casts (gambit-cast protocol).
 ---
 
 # Persona & Voice Router

@@ -2,7 +2,7 @@
 name: |
   ash-bridge-ops
 description: |
-  Load for any Ash Bridge operation — re-syncing skills or Knowledge to GitHub, verifying archive integrity, rotating or auditing bridge tokens, or rebuilding the bridge after a sandbox reset. Owns the rebuild-dry-run-fire-verify-receipt pipeline and bridge token hygiene.
+  Load for any Ash Bridge operation — re-syncing skills or Knowledge to GitHub, verifying archive integrity, rotating or auditing bridge tokens, or rebuilding the bridge after a sandbox reset. Owns the rebuild-dry-run-fire-verify-receipt pipeline and bridge token hygiene. Also auto-loads during "Gambit: Ash Resync" casts (gambit-cast protocol).
 ---
 
 # Ash Bridge Ops
