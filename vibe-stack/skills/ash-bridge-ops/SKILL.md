@@ -32,7 +32,13 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    firing. Fine-grained tokens need Contents read/write on both repos. If the
    only token with private scope is a burned/legacy one, using it requires
    owner authorization already on record, and the receipt must name the
-   exception honestly.
+   exception honestly. Then WRITE-probe both repos with an inconsequential
+   blob POST (expect 201): a 200 on /repos is necessary but NOT sufficient —
+   2026-11-20 saw both repos return 200 with Contents still read-only and the
+   fire aborted at the first blob POST (clean abort, zero partial state). If
+   the owner's claimed settings and the probe results disagree, ask for a
+   screenshot of the token settings page and analyze it — one round of
+   visible UI state ended three rounds of 403s.
 3. **Dry-run first**: `GH_TOKEN=<pat> python3 sync.py --dry-run`. Check the
    selection counts and the quarantined list before any push.
 4. **Fire**: full run (`python3 sync.py`, no `--tier`) for the canonical
@@ -79,8 +85,18 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
   the standing fix: scope the fresh token, then revoke the legacy one.
 - Never use a burned token for anything beyond the owner-authorized bridge
   work, even if it works. Clean hands.
+- Fine-grained PAT configuration checklist (four-round lesson, 2026-11-20):
+  repository access on BOTH repos AND Permissions → Repository permissions
+  → Contents → Read and write. The permission list is alphabetical and
+  Contents is NOT the first rows — the Actions/Administration first-two-rows
+  trap has bitten twice. After saving, re-probe; never trust the toggle
+  without a fresh 201.
+- Stage tokens only as dotfiles OUTSIDE every sync root (e.g.
+  `/home/user/.gh-token`, chmod 600; the bridge skips dotfiles) — a staged
+  token must never ride a fire. Expect sandbox resets to wipe staged state
+  too; re-stage from transcript at the start of any bridge session.
 
-## Known failure modes (from receipts, 2026-11-18)
+## Known failure modes (from receipts, 2026-11-18 → 2026-11-20)
 
 1. Git-data API 409s on empty repos — bootstrap via contents API PUT first.
 2. Raw CDN lags commits by minutes — verify via API.
@@ -94,3 +110,17 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    to the public tier (only `receipts` and `remote_manifest.json` are
    excluded) — verification scratch belongs in /tmp, and a diff of the
    manifest before/after any run catches surprises.
+6. Fine-grained token scopes drift from the owner's mental model: both repos
+   can return 200 while Contents is still read-only (fire aborts at the
+   first blob POST), and visible-but-wrong permission edits (the
+   Actions/Administration first-two-rows trap) fool the UI just as well —
+   resolve with a write-probe plus screenshot forensics, not argument
+   (2026-11-20, four rounds, all honestly ledgered).
+7. Sandbox resets wipe staged state too — the token file and scratch
+   directories vanish with the bridge cache; re-stage from transcript, and
+   keep all re-staging outside sync roots (2026-11-19/20 pattern, survived
+   because tokens never live in synced directories).
+8. sync.py has no `--help` and treats unknown args as a FULL run — a
+   `--help` probe was treated as a fire and timed out at the bash wall
+   (near-miss, 2026-11-19; nothing pushed because the tree was identical).
+   Read the script's argument handling before probing flags.
