@@ -214,6 +214,22 @@ re-fire until reset. Unrefractory triggers re-fire loops and
 double-push. (The --help near-miss and MCP self-loop clocks both
 rhyme with this.)
 
+## 22. Self-Report Is Not a Gate Signal (agents-as-OS-derived)
+
+An agent-generated confidence or quality score must never be the signal
+that stops verification, gates a commit, or certifies its own output:
+self-certification is circular by construction. Gates consume
+externally measured signals — test outcomes, sweeps, canaries,
+third-party confirmation. Trigger: when designing or reviewing any
+stop-condition, self-assessment, confidence threshold, or verification
+shortcut, convert "I am confident" into "I observed X" or reject the
+gate. (Evidence: MedicalOS gated diagnoses at self-reported confidence
+> 7, uncalibrated; passive grounding even LOWERED its confidence below
+the no-tools baseline while similarity rose. Converges with Buff 2
+verify-before-claiming and Rule 19 proof-of-carry — distinct angle: 19
+verifies the signal survives the chain, 22 bans self-report as the
+signal.)
+
 ## Source Anchors
 
 - arXiv 2505.22954 (DGM), 2603.19461 (Hyperagents), 2603.19312 (LeWM),
@@ -232,6 +248,12 @@ rhyme with this.)
   NaV refractory kinetics (Round Two Ingests 4 and 6, Themes 27–34,
   2026-11-20, stored in the `cs-fundamentals` Knowledge topic) —
   rules 19–21.
+- arXiv 2509.11507 (MedicalOS, Zhu & Wu, Sep 2025) — Round Two Deep
+  Read 3, executed 2026-11-20: ReAct agent as a healthcare OS,
+  filesystem-as-state, per-update justification artifacts,
+  self-confidence acceptance gate; claims and attack stored in the
+  `cs-fundamentals` and `self-improvement-research` Knowledge topics —
+  rule 22.
 - anthropic.com/research/assistant-axis
 - pmc.ncbi.nlm.nih.gov/articles/PMC1764845 (Fisher et al.), mdpi.com/2076-3425/12/7/830
 
@@ -275,6 +297,12 @@ Andy's validation (propose-never-install held), installed on his blanket
 tuning directive ("fix yourself and tune ... lets get this engine
 roaring"), the pending-nod gate satisfied. Registry count: 21 rules,
 three source-anchored, install logged. Same gate discipline as 17-18.
+Patched 2026-11-20: rule 22 (self-report is not a gate signal) installed
+from the MedicalOS deep read (Round Two Deep Read 3, arXiv 2509.11507)
+— proposed at the 05:23Z raid report, held PENDING Andy, installed on
+his explicit nod from the roster ("install it, the tuning directive
+stands"). Registry count: 22 rules, four source-anchored, install
+logged. Same gate discipline as 17-21.
 
 ## Buff Stack Registry
 
