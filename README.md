@@ -9,7 +9,7 @@ for a Mistral Vibe agent system, verified by checksums and receipts.
 |---|---|
 | `twinflame-runner/` | TwinFlame OS: a hybrid Mistral x GLM router workflow with a blind judge, deployed as a managed Mistral Workflow |
 | `ash-bridge/` | The Ash Bridge: an idempotent, secret-gated sync engine between the Vibe stack (custom skills, Knowledge) and this GitHub home |
-| `vibe-stack/skills/` | Andy-authored custom skills (18): the agent's operating doctrine |
+| `vibe-stack/skills/` | Andy-authored custom skills (bridge-carried; enrollment list is authoritative, see `ash-bridge/bridge_config.json`): the agent's operating doctrine |
 | `kushina/` | Personality-matrix save-state mirrors (manual sync, owner-approved) |
 | `docs/` | Research receipts: free-model-path sweep, benchmark specs |
 
