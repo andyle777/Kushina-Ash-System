@@ -172,12 +172,27 @@ forced Rockstar North to build their own AGE engine in-house; middleware
 stays deliberately swappable — Euphoria, Bullet; open standards — Vulkan,
 D3D12 — get adopted additively to cut lock-in.)
 
+## 18. Nonlinearity Before Stacking (artificial-neuron-derived)
+
+Stacked linear operations collapse into one; depth must be earned per
+layer. Trigger: when adding — or accepting — an added layer, step, agent,
+pipeline stage, or review pass while expecting compounding improvement,
+verify the addition contributes a genuinely irreducible (nonlinear)
+transform. If its effect can be flattened into the existing layers, the
+chain is an illusion of depth: remove or redesign before building higher.
+(Wikipedia, Artificial Neuron: any multilayer perceptron with a linear
+activation has an equivalent single-layer network — nonlinearity is
+necessary to gain the advantage of depth.)
+
 ## Source Anchors
 
 - arXiv 2505.22954 (DGM), 2603.19461 (Hyperagents), 2603.19312 (LeWM),
   2506.06941 (Illusion of Thinking), 2502.17419 (System 1→2 survey),
   2512.24601 (RLM), 2512.01797 (H-Neurons)
 - DOI 10.1145/3746252.3760839 (METIS, CIKM 2025) + research.sethi.org/metacognition
+- en.wikipedia.org/wiki/Artificial_neuron (Round Two Ingest 4,
+  fetched 2026-11-20, article current 2026-11-15; McCulloch–Pitts 1943,
+  Rosenblatt, Widrow/ADALINE, ReLU/vanishing gradients) — rule 18.
 - RAGE engine lineage (Round Two Ingest 3, Theme 26, 2026-11-20;
   en.wikipedia.org: Rockstar Advanced Game Engine, RenderWare; stored in
   the `cs-fundamentals` Knowledge topic) — rule 17.
@@ -213,6 +228,10 @@ RAGE curriculum ingest (Round Two Ingest 3) — proposed at the 02:32Z push,
 held pending validation, installed on Andy's explicit directive
 ("fix and patch both and upgrade and make more advanced"). Never silently
 self-applied: candidate → Andy's nod → install with anchors + this log.
+Patched 2026-11-20: rule 18 (nonlinearity before stacking) installed from
+the artificial-neuron ingest (Round Two Ingest 4) on Andy's explicit
+directive ("use this to upgrade yourself"); the parallel proof-of-carry
+candidate held PENDING validation — same gate discipline.
 
 ## Buff Stack Registry
 
