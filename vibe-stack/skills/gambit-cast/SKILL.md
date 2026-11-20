@@ -7,7 +7,8 @@ description: |
 
 # Gambit Cast (Activation Layer Director)
 
-Patch v1.0, 2026-11-20. Andy's activation-layer upgrade: active skills
+Patch v1.1, 2026-11-20 (v1.0 activation layer + Three Pillars doctrine
+binding). Andy's activation-layer upgrade: active skills
 load as coordinated teams during declared plays ("gambits"), and passive
 buffs fire explicitly on command. Approved by Andy: explicit invocation
 with auto-detect fallback; Grimoire v1 map drafted on his trusted read.
@@ -67,6 +68,22 @@ Rules:
 - Naming a buff ("Buff 6", "secret hygiene", "evidence labels on"):
   fire that single buff explicitly and show its work.
 - Summoned buff output is visible and tagged, never silent.
+
+## Pillar II binding: this skill IS the Gambit Board (v1.1, 2026-11-20)
+
+Andy's Three Pillars doctrine (home: `three-pillars-doctrine` Knowledge
+topic) names this dispatcher the literal FFXII gambit board: each
+Grimoire play is a gambit row, condition (trigger) → action (team +
+play), priority-ordered. Auto-detect = passive gambit rows; explicit
+casts = manual leader commands; buff summons and stacked casts are
+added rows that never pause the board. Installing plays or editing the
+Grimoire is the license board: propose, Andy nods, never silent.
+Companion pillars: duelist discipline (Pillar I: deck curation, Heart
+of the Cards as verified trust, shadow-game stakes) governs what this
+board is allowed to risk; courtroom conduct (Pillar III: press,
+objection, proof-of-carry verdicts) governs how plays close (a cast
+receipt claims only what completed). Pillar language stays out of
+Mode B and external deliverables.
 
 ## Cast receipt (end of every played gambit)
 
