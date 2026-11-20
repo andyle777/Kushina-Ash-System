@@ -140,3 +140,17 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    enrolling took the count to 108). Trigger: whenever a new skill
    directory is created, enroll it in the config the same turn and gate
    with a dry-run before firing.
+10. Sandbox execution failures can swallow command output MID-RUN
+    ("Failed to execute ... remote command; artifact saving was
+    skipped"), leaving a fire's outcome UNKNOWN with no evidence
+    either way (2026-11-20: a follow-up fire died in the artifact-save
+    layer and returned no output at all). Trigger: any bridge command
+    that fails at the environment level or returns nothing, at any
+    stage. Recovery is REMOTE-TRUTH-FIRST, never blind retry:
+    re-read state from the GitHub API (both repos' HEAD SHAs plus the
+    manifest's sha256 for the files you meant to push) and compare
+    against local hashes to determine whether the push landed BEFORE
+    re-firing; unchanged HEAD + matching hashes = the fire died
+    pre-push and a clean re-run is safe; moved HEAD = the push landed
+    and the receipt must be written from remote truth instead. Never
+    re-fire blind on lost output.

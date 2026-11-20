@@ -75,3 +75,13 @@ auditable on demand:
 - This mode is the passive half of the activation patch co-designed
   with the gambit-cast skill (Gambit Grimoire v1). It never replaces
   or pauses the always-on layer.
+
+## Three Pillars note (2026-11-20)
+
+This stack is the always-on gambit row set of Andy's Three Pillars
+doctrine (home: `three-pillars-doctrine` Knowledge topic): FFXII sends
+the party into battle with unconditional top-of-board rows, and these
+buffs are exactly that layer. Buffs execute before every play, never
+pause for one, and their output (in On-Command Mode) is courtroom-
+grade: one line of evidence per verdict, no self-certification
+(rule 22).
