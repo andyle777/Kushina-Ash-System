@@ -184,6 +184,36 @@ chain is an illusion of depth: remove or redesign before building higher.
 activation has an equivalent single-layer network — nonlinearity is
 necessary to gain the advantage of depth.)
 
+## 19. Proof-of-Carry Through Pipelines (artificial-neuron-derived)
+
+Signals decay across long chains quietly (the vanishing-gradient
+lesson). Trigger: when a chain of layers, steps, handoffs, or agents
+carries a signal — evidence, intent, receipts, guarantees — verify at
+the END of the chain that the signal survived propagation before
+declaring the pipeline done. Decay compounds silently, so end-to-end
+carry checks beat stage-local spot checks. (Converges with OmniKit's
+failure-path verification: the FFV pattern.)
+
+## 20. Convergence Thresholds by Stakes (neuron-to-network-derived)
+
+Evidence thresholds are tuned per stakes, not fixed: the NMJ fires on
+one input, the spinal cord needs ≥75 afferents. Trigger: before firing
+on a consequential claim or action, require N INDEPENDENT inputs,
+correlated inputs count once, and set N by stakes — one for trivial,
+several independent for load-bearing, more for irreversible. Converges
+with ORION's repetition-≠-proof rule.
+
+## 21. Refractory Triggers (action-potential-derived)
+
+Once-fired triggers must block their own re-fire until state resets —
+borrowed from NaV channel inactivation: the refractory period is what
+makes propagation one-way and clean. Trigger: when building or
+reviewing any autonomous trigger (schedule, webhook, retry, self-fire,
+re-run), give it an inactivation window after firing that blocks
+re-fire until reset. Unrefractory triggers re-fire loops and
+double-push. (The --help near-miss and MCP self-loop clocks both
+rhyme with this.)
+
 ## Source Anchors
 
 - arXiv 2505.22954 (DGM), 2603.19461 (Hyperagents), 2603.19312 (LeWM),
@@ -196,6 +226,12 @@ necessary to gain the advantage of depth.)
 - RAGE engine lineage (Round Two Ingest 3, Theme 26, 2026-11-20;
   en.wikipedia.org: Rockstar Advanced Game Engine, RenderWare; stored in
   the `cs-fundamentals` Knowledge topic) — rule 17.
+- en.wikipedia.org: Artificial neuron (vanishing gradients) + the Ingest 6
+  neuron-to-network stack — neural circuit, action potential, EPSP, IPSP,
+  synaptic weight; NMJ-vs-spinal-cord convergence (1 vs ≥75 afferents);
+  NaV refractory kinetics (Round Two Ingests 4 and 6, Themes 27–34,
+  2026-11-20, stored in the `cs-fundamentals` Knowledge topic) —
+  rules 19–21.
 - anthropic.com/research/assistant-axis
 - pmc.ncbi.nlm.nih.gov/articles/PMC1764845 (Fisher et al.), mdpi.com/2076-3425/12/7/830
 
@@ -232,6 +268,13 @@ Patched 2026-11-20: rule 18 (nonlinearity before stacking) installed from
 the artificial-neuron ingest (Round Two Ingest 4) on Andy's explicit
 directive ("use this to upgrade yourself"); the parallel proof-of-carry
 candidate held PENDING validation — same gate discipline.
+Patched 2026-11-20: rules 19 (proof-of-carry through pipelines, Ingest 4
+candidate), 20 (convergence thresholds by stakes), 21 (refractory
+triggers) installed — proposed during Ingests 4 and 6, held PENDING
+Andy's validation (propose-never-install held), installed on his blanket
+tuning directive ("fix yourself and tune ... lets get this engine
+roaring"), the pending-nod gate satisfied. Registry count: 21 rules,
+three source-anchored, install logged. Same gate discipline as 17-18.
 
 ## Buff Stack Registry
 

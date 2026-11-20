@@ -132,3 +132,11 @@ repo `andyle777/Kushina-Ash-System` under `ash-bridge/`; the local copy at
    (help/unknown/tier-missing → exits 0/2/2, both repos' HEADs
    byte-identical before and after, zero pollution).** Historical note
    kept: read a script's argument handling before probing flags.
+9. New custom skills are NOT auto-carried: selection is the deterministic
+   include-list in `bridge_config.json`. A skill created this session
+   rides only after being enrolled in the custom-skills include list
+   (2026-11-20: creating `gambit-cast` left the first dry-run at 107
+   carried — the gate caught the invisible skill BEFORE any push;
+   enrolling took the count to 108). Trigger: whenever a new skill
+   directory is created, enroll it in the config the same turn and gate
+   with a dry-run before firing.
