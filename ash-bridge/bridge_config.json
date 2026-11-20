@@ -13,8 +13,14 @@
     {
       "name": "bridge-self",
       "root": "/home/user/ash-bridge",
-      "include": ["*"],
-      "exclude": ["receipts", "remote_manifest.json", "__pycache__"],
+      "include": [
+        "*"
+      ],
+      "exclude": [
+        "receipts",
+        "remote_manifest.json",
+        "__pycache__"
+      ],
       "tier": "public",
       "dest_path": "ash-bridge"
     },
@@ -22,12 +28,25 @@
       "name": "custom-skills",
       "root": "/home/user/skills",
       "include": [
-        "analytical-engine", "ash-bridge-ops", "curriculum-wave-distiller",
-        "durability-guardian", "ether-emulation", "experiment-smith",
-        "gambit-cast", "mysterious-stranger", "omnichronos", "omnikit",
-        "orion-rd-methodology", "paper-deep-read", "passive-buffs",
-        "persona-voice-router", "self-improvement-engine",
-        "syntax-emulation", "toolkit-workflow", "united-english-lexicon"
+        "analytical-engine",
+        "ash-bridge-ops",
+        "curriculum-wave-distiller",
+        "durability-guardian",
+        "ether-emulation",
+        "experiment-smith",
+        "gambit-cast",
+        "heaven-court",
+        "mysterious-stranger",
+        "omnichronos",
+        "omnikit",
+        "orion-rd-methodology",
+        "paper-deep-read",
+        "passive-buffs",
+        "persona-voice-router",
+        "self-improvement-engine",
+        "syntax-emulation",
+        "toolkit-workflow",
+        "united-english-lexicon"
       ],
       "exclude": [],
       "tier": "public",
@@ -36,7 +55,9 @@
     {
       "name": "knowledge",
       "root": "/home/user/knowledge",
-      "include": ["*"],
+      "include": [
+        "*"
+      ],
       "exclude": [],
       "tier": "private",
       "dest_path": "knowledge"
@@ -44,7 +65,7 @@
   ],
   "public_mirrors": [
     {
-      "note": "Kushina personality matrix save state v2.0.0",
+      "note": "Kushina personality matrix save state (current major version: see twinflame receipts; this note intentionally unversioned to avoid staleness)",
       "private_source": "knowledge/kushina-persona/KNOWLEDGE.md",
       "public_path": "kushina/personality-matrix.md",
       "sync_policy": "manual-on-major-state-changes (owner approval required per matrix contract)"
